@@ -1,0 +1,8 @@
+package: github.com/kcmerrill/tracer
+import:
+- package: github.com/Masterminds/sprig
+  version: ^2.15.0
+- package: github.com/sirupsen/logrus
+  version: ^1.0.5
+- package: github.com/gorilla/mux
+  version: ^1.6.1
