@@ -24,3 +24,5 @@ $ tracer --bind 0.0.0.0:8080 --panic "echo {{ .Name }} was not seen in the expec
 
 * * * * *  http http://localhost:8080/job.every.minute/1m < /panic/job.every.minute; /scripts/script.sh && http http://localhost:8080/job.every.minute
 ```
+
+[![forthebadge](https://forthebadge.com/images/badges/fuck-it-ship-it.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://forthebadge.com)
