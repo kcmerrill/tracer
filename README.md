@@ -6,7 +6,7 @@
 
 # Tracer
 
-A work in progress, but tracer is designed to alert you when cron jobs fail, or when long running multi phased ETL processes fail to complete.
+A simple webserver designed to alert you when cron jobs fail, or when long running multi phased ETL processes fail to complete.
 
 For more information [RTFM](TFM.md "additional documentation").
 
