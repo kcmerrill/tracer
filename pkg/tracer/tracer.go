@@ -96,6 +96,7 @@ func (t *Tracer) serve() {
 
 	r := mux.NewRouter()
 	r.HandleFunc(`/{check}`, t.httpAuth(t.auth, t.clearCheck)).Methods("GET")
+	r.HandleFunc(`/{check}/in/{duration}`, t.httpAuth(t.auth, t.createCheck)).Methods("GET", "POST", "PUT")
 	r.HandleFunc(`/{check}/{duration}`, t.httpAuth(t.auth, t.createCheck)).Methods("GET", "POST", "PUT")
 	srv := &http.Server{
 		Handler:      r,

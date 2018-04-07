@@ -60,39 +60,48 @@ func initCheck(name, duration, panic string) *check {
 		"created":  c.Created,
 	}).Info("Creating check")
 
+	dur := c.duration()
+
+	go c.monitor(dur)
+	return c
+}
+
+func (c *check) monitor(dur time.Duration) string {
+	select {
+	case status := <-c.completed:
+		log.WithFields(log.Fields{
+			"check":    c.Name,
+			"duration": c.Duration,
+			"created":  c.Created,
+		}).Info(status)
+		// whew! good to go
+		return status
+	case <-time.After(dur):
+		parsedPanic := c.parsePanic(c.Panic)
+		log.WithFields(log.Fields{
+			"check":    c.Name,
+			"duration": c.Duration,
+			"panic":    parsedPanic,
+			"created":  c.Created,
+		}).Error("Panicking ...")
+
+		cmd := exec.Command("bash", "-c", parsedPanic)
+		cmd.CombinedOutput()
+		return parsedPanic
+	}
+}
+
+func (c *check) duration() time.Duration {
 	// validate the duration
 	dur, err := time.ParseDuration(c.Duration)
 	if err != nil {
-		// default to 3 hours
-		dur = 3 * time.Hour
+		// default to 1 hour
+		dur = 1 * time.Hour
+		c.Duration = "1h"
 		log.WithFields(log.Fields{
 			"duration": c.Duration,
-			"default":  "3h",
+			"default":  "1h",
 		}).Error("Unable to parse duration")
 	}
-
-	go func(c *check) {
-		select {
-		case status := <-c.completed:
-			log.WithFields(log.Fields{
-				"check":    c.Name,
-				"duration": c.Duration,
-				"created":  c.Created,
-			}).Info(status)
-			// whew! good to go
-			return
-		case <-time.After(dur):
-			parsedPanic := c.parsePanic(c.Panic)
-			log.WithFields(log.Fields{
-				"check":    c.Name,
-				"duration": c.Duration,
-				"panic":    parsedPanic,
-				"created":  c.Created,
-			}).Error("Panicking ...")
-
-			cmd := exec.Command("bash", "-c", parsedPanic)
-			cmd.CombinedOutput()
-		}
-	}(c)
-	return c
+	return dur
 }
